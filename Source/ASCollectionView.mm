@@ -1195,15 +1195,26 @@ static NSString * const kReuseIdentifier = @"_ASCollectionReuseIdentifier";
   ASCellNode *node = element.node;
   ASWrapperCellNode *wrapperNode = (node.shouldUseUIKitCell ? (ASWrapperCellNode *)node : nil);
   BOOL shouldDequeueExternally = _asyncDataSourceFlags.interopAlwaysDequeue || (_asyncDataSourceFlags.interop && wrapperNode);
-
+    
+  NSString* cellCreationSource;
+    
   if (wrapperNode.cellForItemBlock) {
     cell = wrapperNode.cellForItemBlock(wrapperNode);
+    cellCreationSource = @"wrapperNode.cellForItemBlock";
   } else if (shouldDequeueExternally) {
     cell = [(id<ASCollectionDataSourceInterop>)_asyncDataSource collectionView:collectionView cellForItemAtIndexPath:indexPath];
+    cellCreationSource = @"_asyncDataSource";
   } else {
     cell = [self dequeueReusableCellWithReuseIdentifier:kReuseIdentifier forIndexPath:indexPath];
+    cellCreationSource = @"dequeueReusableCellWithReuseIdentifier";
   }
 
+    if (_logCellSourceBlock) {
+        BOOL isCellNotNil = cell != nil;
+        NSString *logMessage = [NSString stringWithFormat:@"%@ returns cell != nil: %@", cellCreationSource, @(isCellNotNil)];
+        _logCellSourceBlock(logMessage);
+    }
+    
   ASDisplayNodeAssert(element != nil, @"Element should exist. indexPath = %@, collectionDataSource = %@", indexPath, self);
   ASDisplayNodeAssert(cell != nil, @"UICollectionViewCell must not be nil. indexPath = %@, collectionDataSource = %@", indexPath, self);
 
