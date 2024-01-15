@@ -1209,11 +1209,11 @@ static NSString * const kReuseIdentifier = @"_ASCollectionReuseIdentifier";
     cellCreationSource = @"dequeueReusableCellWithReuseIdentifier";
   }
 
-    if (_logCellSourceBlock) {
-        BOOL isCellNotNil = cell != nil;
-        NSString *logMessage = [NSString stringWithFormat:@"%@ returns cell != nil: %@", cellCreationSource, @(isCellNotNil)];
-        _logCellSourceBlock(logMessage);
-    }
+  if (_logCellSourceBlock) {
+    BOOL isCellNotNil = cell != nil;
+    NSString *logMessage = [NSString stringWithFormat:@"%@ returns for indexPath = %@ cell != nil: %@", cellCreationSource, indexPath, @(isCellNotNil)];
+    _logCellSourceBlock(logMessage);
+  }
     
   ASDisplayNodeAssert(element != nil, @"Element should exist. indexPath = %@, collectionDataSource = %@", indexPath, self);
   ASDisplayNodeAssert(cell != nil, @"UICollectionViewCell must not be nil. indexPath = %@, collectionDataSource = %@", indexPath, self);
